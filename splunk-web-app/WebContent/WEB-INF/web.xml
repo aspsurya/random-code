@@ -4,7 +4,7 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 	<display-name>splunkweb</display-name>
 	<welcome-file-list>
-		<welcome-file>alive.html</welcome-file>
+		<welcome-file>test.html</welcome-file>
 	</welcome-file-list>
 
 	<servlet>
