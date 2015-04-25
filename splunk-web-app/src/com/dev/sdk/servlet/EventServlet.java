@@ -1,6 +1,8 @@
 package com.dev.sdk.servlet;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -24,28 +26,23 @@ public class EventServlet extends HttpServlet {
 			throws ServletException, java.io.IOException {
 
 		Service service = ExportSearch.init();
-		List<Event> events = ExportSearch.executeExportSearchByStatus(service);
-		
-		Map<String, String> statusMap = new HashMap<String, String>();
-		/*data: [{
-            period: '2010 Q1',
-            iphone: 2666,
-            ipad: null,
-            itouch: 2647
-        }, {
-            period: '2010 Q2',
-            iphone: 2778,
-            ipad: 2294,
-            itouch: 2441
-        }*/
-		
-		for (Event event : events) {
-			for (String key : event.keySet()) {
-				statusMap.put(ErrorCodes.getCodeText(Integer.parseInt(event.get("status"))), event.get("count"));
-			}
-		}
+		List<Event> events = ExportSearch.executeExportSearchByStatusPerDay(service);
 
-		JSONObject json = new JSONObject(statusMap);
+		Map<Integer, List<Map<String, String>>> barMap = new HashMap<Integer, List<Map<String, String>>>();
+		List<Map<String, String>> records = new ArrayList<Map<String, String>>();
+		for (Event event : events) {
+			Map<String, String> record = new HashMap<String, String>();
+			for (String key : event.keySet()) {
+				record.put("period",
+						event.get("date_year") + " " + event.get("date_year")
+								+ " " + event.get("date_year"));
+				record.put("events", event.get("count"));
+			}
+			records.add(record);
+		}
+		barMap.put(0, records);
+
+		JSONObject json = new JSONObject(barMap);
 		response.setContentType("text/plain");
 		response.getWriter().println(json);
 	}
