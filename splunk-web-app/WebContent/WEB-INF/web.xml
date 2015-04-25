@@ -27,6 +27,16 @@
 		<url-pattern>/EventServlet</url-pattern>
 	</servlet-mapping>
 	
+	
+	<servlet>
+		<servlet-name>EventsCountServlet</servlet-name>
+		<servlet-class>com.dev.sdk.servlet.EventsCountServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>EventsCountServlet</servlet-name>
+		<url-pattern>/EventsCountServlet</url-pattern>
+	</servlet-mapping>
 
 	<listener>
 		<listener-class>com.dev.sdk.job.ContextLoaderListener</listener-class>

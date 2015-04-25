@@ -17,7 +17,7 @@ import com.dev.sdk.splunk.ExportSearch;
 import com.splunk.Event;
 import com.splunk.Service;
 
-public class EventServlet extends HttpServlet {
+public class EventsCountServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 1L;
 
@@ -25,23 +25,30 @@ public class EventServlet extends HttpServlet {
 			throws ServletException, java.io.IOException {
 
 		Service service = ExportSearch.init();
-		List<Event> events = ExportSearch.executeExportSearchByStatusPerDay(service);
-
-		JSONObject json = null;
-		Map<Integer, List<List<Integer>>> barMap = new HashMap<Integer, List<List<Integer>>>();
-		List<List<Integer>> records = new ArrayList<List<Integer>>();
-		int idx = 0;
-		for (Event event : events) {
-			List<Integer> record = new ArrayList<Integer>();
-			record.add(idx++);
-			record.add(Integer.parseInt(event.get("count")));
-			records.add(record);
+		
+        //String mySearch = "search index=access_idx | stats count by date_year,date_month,date_mday,status";
+		String cond = "";
+		if("critical".equalsIgnoreCase(request.getParameter("type"))){
+			cond  = "status=4* ";
 		}
 		
-		barMap.put(0, records);
+        String mySearch = "search index=access_idx " + cond + "latest=now earliest=-3d| stats count by date_year,date_month,date_mday | sort -date_year,-date_month, -date_mday";
+		
+		List<Event> events = ExportSearch.run(service, mySearch);
+		
+		JSONObject json = null;
+		
+		Map<Integer, List<Integer>> eventsMap = new HashMap<Integer, List<Integer>>();
+		List<Integer> records = new ArrayList<Integer>();
+		
+		for (Event event : events) {
+			records.add(Integer.parseInt(event.get("count")));
+		}
+		
+		eventsMap.put(0, records);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
-			String str = mapper.writeValueAsString(barMap);
+			String str = mapper.writeValueAsString(eventsMap);
 			json = new JSONObject(str);
 			//System.out.println(json);
 		} catch (Exception e) {

@@ -213,6 +213,30 @@ public class ExportSearch {
 			e.printStackTrace();
 		}*/
 		
+		
+		
+		JSONObject json = null;
+		Map<Integer, List<List<Integer>>> barMap = new HashMap<Integer, List<List<Integer>>>();
+		List<List<Integer>> records = new ArrayList<List<Integer>>();
+		int idx = 0;
+		for (Event event : events) {
+			List<Integer> record = new ArrayList<Integer>();
+			record.add(idx++);
+			record.add(Integer.parseInt(event.get("count")));
+			records.add(record);
+		}
+		
+		barMap.put(0, records);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String str = mapper.writeValueAsString(barMap);
+			json = new JSONObject(str);
+			System.out.println(json);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		
 
 	}
 	
@@ -259,7 +283,8 @@ public class ExportSearch {
         exportArgs.setEarliestTime("-3years");  //Working  -720h, -3years
         exportArgs.setLatestTime("now"); 
             
-        String mySearch = "search index=access_idx | stats count by date_year,date_month,date_mday,status";
+        //String mySearch = "search index=access_idx | stats count by date_year,date_month,date_mday,status";
+        String mySearch = "search index=access_idx status=4* | stats count by date_year,date_month,date_mday";
         InputStream exportSearch = service.export(mySearch, exportArgs);
         
         MultiResultsReaderXml multiResultsReader = new MultiResultsReaderXml(exportSearch);
@@ -273,6 +298,36 @@ public class ExportSearch {
         System.out.println(events.size());
         
         //generateJSON(events);
+        //displayEvents(events);
+        return events;
+    }
+	
+	public static List<Event> run(Service service, String mySearch) throws IOException {
+        List<Event> events = new ArrayList<Event>();
+        JobExportArgs exportArgs = new JobExportArgs();
+        exportArgs.setSearchMode(JobExportArgs.SearchMode.NORMAL);
+        exportArgs.setOutputMode(JobExportArgs.OutputMode.XML); 
+
+        JobResultsPreviewArgs previewargs = new JobResultsPreviewArgs();
+        previewargs.setCount(1000);
+        
+        exportArgs.setEarliestTime("-3years");  //Working  -720h, -3years
+        exportArgs.setLatestTime("now"); 
+
+        InputStream exportSearch = service.export(mySearch, exportArgs);
+        
+        MultiResultsReaderXml multiResultsReader = new MultiResultsReaderXml(exportSearch);
+        for (SearchResults searchResults : multiResultsReader) {
+            for (Event event : searchResults) {
+                events.add(event);
+            }
+        }
+
+        multiResultsReader.close();
+        System.out.println(events.size());
+        
+        //generateJSON(events);
+        //displayEvents(events);
         return events;
     }
 }

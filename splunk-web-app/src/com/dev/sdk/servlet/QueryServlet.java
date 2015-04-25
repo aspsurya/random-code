@@ -25,14 +25,12 @@ public class QueryServlet extends HttpServlet {
 
 		Service service = ExportSearch.init();
 		List<Event> events = ExportSearch.executeExportSearchByStatus(service);
-		
+
 		Map<String, String> statusMap = new HashMap<String, String>();
-		
-		
+
 		for (Event event : events) {
-			for (String key : event.keySet()) {
-				statusMap.put(ErrorCodes.getCodeText(Integer.parseInt(event.get("status"))), event.get("count"));
-			}
+			statusMap.put(ErrorCodes.getCodeText(Integer.parseInt(event
+					.get("status"))), event.get("count"));
 		}
 
 		JSONObject json = new JSONObject(statusMap);
