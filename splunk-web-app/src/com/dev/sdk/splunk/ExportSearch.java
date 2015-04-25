@@ -201,7 +201,6 @@ public class ExportSearch {
 		
 		MultiResultsReaderXml multiResultsReader = new MultiResultsReaderXml(exportSearch);
 		for (SearchResults searchResults : multiResultsReader) {
-			String resultSetType = searchResults.isPreview() ? "Preview" : "Final";
 			for (Event event : searchResults) {
 				events.add(event);
 			}
@@ -231,7 +230,6 @@ public class ExportSearch {
         
         MultiResultsReaderXml multiResultsReader = new MultiResultsReaderXml(exportSearch);
         for (SearchResults searchResults : multiResultsReader) {
-            String resultSetType = searchResults.isPreview() ? "Preview" : "Final";
             for (Event event : searchResults) {
                 events.add(event);
             }
