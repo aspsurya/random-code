@@ -2,11 +2,15 @@ package com.dev.sdk.splunk;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONObject;
 
 import com.splunk.Event;
@@ -170,6 +174,7 @@ public class ExportSearch {
 	}
 	
 	private static void generateJSON(List<Event> events) {
+		/*		
 		Map<String,String> statusMap = new HashMap<String,String>();
 		for (Event event : events) {
 			for (String key : event.keySet()) {
@@ -180,6 +185,35 @@ public class ExportSearch {
 		
 		JSONObject json=new JSONObject(statusMap);
 		System.out.println(json);
+		*/
+		
+/*		JSONObject json = null;
+		Map<Integer, List<Map<String, String>>> barMap = new HashMap<Integer, List<Map<String, String>>>();
+		List<Map<String, String>> records = new ArrayList<Map<String, String>>();
+		for (Event event : events) {
+			Map<String, String> record = new HashMap<String, String>();
+			record.put("period", event.get("date_year") + " " + event.get("date_month") + " " + event.get("date_mday"));
+			record.put("events", event.get("count"));
+			records.add(record);
+		}
+		
+		barMap.put(0, records);
+		ObjectMapper mapper = new ObjectMapper();
+		try {
+			String str = mapper.writeValueAsString(barMap);
+			json = new JSONObject(str);
+			System.out.println(json);
+		} catch (JsonGenerationException e) {
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}*/
+		
+
 	}
 	
 	
@@ -209,7 +243,7 @@ public class ExportSearch {
 		multiResultsReader.close();
 		System.out.println(events.size());
 		
-		generateJSON(events);
+		//generateJSON(events);
 		return events;
 	}
 	
@@ -238,20 +272,7 @@ public class ExportSearch {
         multiResultsReader.close();
         System.out.println(events.size());
         
-        generateJSON(events);
+        //generateJSON(events);
         return events;
     }
 }
-
-/*
- * Events per day
-count :  85
-status :  304
-date_mday :  6
-date_year :  2015
-date_month :  march
-count :  13
-status :  404
-date_mday :  6
-date_year :  2015
-date_month :  march*/
