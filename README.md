@@ -3,10 +3,10 @@ Create a real-time log stream monitoring and alerting system which can process c
 
 What are the Use Cases?
 Development of a scalable system for the below 4 use cases -
-Real-time streaming log monitoring and collection from multiple applications
-Real-time streaming log processing in online mode and generation of events/incidents based on rules/keywords
-Querying on the real-time data for finding events/incidents, reporting and visualization
-Real-time log alerting/notification through different modes (Email/SMS) 
+1.Real-time streaming log monitoring and collection from multiple applications
+2.Real-time streaming log processing in online mode and generation of events/incidents based on rules/keywords
+3.Querying on the real-time data for finding events/incidents, reporting and visualization
+4.Real-time log alerting/notification through different modes (Email/SMS) 
 
 Software and Hardware Details
 Splunk Enterprise 6.2.x
