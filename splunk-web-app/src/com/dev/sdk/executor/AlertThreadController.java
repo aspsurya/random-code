@@ -12,10 +12,10 @@ public class AlertThreadController implements Runnable {
 		try{
 			if("ACCESS_LOG_ALERT".equalsIgnoreCase(this.alertType)){
 				System.out.println("AlertThreadController - " + Thread.currentThread().getName() + " started processing for " + this.alertType);
-				EmailAlertExecutor.execute();
-			}else if("SEC_LOG_ALERT".equalsIgnoreCase(this.alertType)){
+				AccesslogAlertExecutor.execute();
+			}else if("SYS_LOG_ALERT".equalsIgnoreCase(this.alertType)){
 				System.out.println("AlertThreadController - " + Thread.currentThread().getName() + " started processing for " + this.alertType);
-				//DstipExecutor.execute();
+				SyslogAlertExecutor.execute();
 			}else{
 				System.out.println("Invalid Alert Type : " + this.alertType);
 			}

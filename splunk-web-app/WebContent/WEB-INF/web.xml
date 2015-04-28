@@ -16,7 +16,7 @@
 		<servlet-name>QueryServlet</servlet-name>
 		<url-pattern>/QueryServlet</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>EventServlet</servlet-name>
 		<servlet-class>com.dev.sdk.servlet.EventServlet</servlet-class>
@@ -26,8 +26,8 @@
 		<servlet-name>EventServlet</servlet-name>
 		<url-pattern>/EventServlet</url-pattern>
 	</servlet-mapping>
-	
-	
+
+
 	<servlet>
 		<servlet-name>EventsCountServlet</servlet-name>
 		<servlet-class>com.dev.sdk.servlet.EventsCountServlet</servlet-class>
@@ -36,6 +36,21 @@
 	<servlet-mapping>
 		<servlet-name>EventsCountServlet</servlet-name>
 		<url-pattern>/EventsCountServlet</url-pattern>
+	</servlet-mapping>
+
+	<servlet-mapping>
+		<servlet-name>EventsCountServlet</servlet-name>
+		<url-pattern>/events-count</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>KeywordSetupServlet</servlet-name>
+		<servlet-class>com.dev.sdk.servlet.KeywordSetupServlet</servlet-class>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>KeywordSetupServlet</servlet-name>
+		<url-pattern>/keyword-setup</url-pattern>
 	</servlet-mapping>
 
 	<listener>

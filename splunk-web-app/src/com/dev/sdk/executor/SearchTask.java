@@ -30,13 +30,12 @@ public class SearchTask implements Callable<String> {
 		try {
 			if("ACCESS_LOG_ALERT".equalsIgnoreCase(this.alertType)) {
 				List<Event> events = ExportSearch.executeExportSearch(this.service,this.alertType,this.alertKeyword);
-				EmailAlertExecutor.setEvents(events);
-				//displayEvents(events);
-				System.out.println("\nEvents size = " + events.size());
-			}else if("SEC_LOG_ALERT".equalsIgnoreCase(this.alertType)) {
-				List<Event> events = ExportSearch.executeExportSearch(this.service,this.alertType,this.alertKeyword);
-				//displayEvents(events);
-				System.out.println("\nEvents size = " + events.size());
+				AccesslogAlertExecutor.setEvents(events);
+				//System.out.println("\nEvents size = " + events.size());
+			}else if("SYS_LOG_ALERT".equalsIgnoreCase(this.alertType)) {
+				List<Event> events = ExportSearch.executeExportSearchSyslog(this.service,this.alertType,this.alertKeyword);
+				SyslogAlertExecutor.setEvents(events);
+				//System.out.println("\nEvents size = " + events.size());
 			}
 			status = "SUCCESS";
 		} catch (Exception e) {

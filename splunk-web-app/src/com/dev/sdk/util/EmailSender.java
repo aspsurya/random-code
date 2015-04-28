@@ -1,5 +1,7 @@
 package com.dev.sdk.util;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Date;
 import java.util.Properties;
@@ -26,13 +28,19 @@ public class EmailSender {
 		try {
 			// Sets SMTP server properties
 			properties = new Properties();
-			//properties.put("mail.debug", "true");  
+			String pathname = "C:/hackathon/email.properties";
+			FileInputStream inStream = new FileInputStream( new File(pathname));
+			properties.load(inStream);
+			
+			//Working
+			/*
+			properties.put("mail.debug", "false");
 			properties.put("mail.smtp.host", "smtp.gmail.com");
 			properties.put("mail.smtp.port", "587"); //Working
 			properties.put("mail.smtp.auth", "true");
 			properties.put("mail.smtp.starttls.enable", "true");
 			properties.put("mail.login.username", "uis.qa2@gmail.com");
-			properties.put("mail.login.password", "Test123@");
+			properties.put("mail.login.password", "Test123@");*/
 			
 			//Not working
 			/*
@@ -66,15 +74,14 @@ public class EmailSender {
 		}
 	}
 
-	public static void sendEmailWithAttachments(final String userName,
-			String toAddress, String subject, String message,
+	public static void sendEmailWithAttachments(String subject, String message,
 			String[] attachFiles) throws AddressException, MessagingException {
 
 		// creates a new e-mail message
 		Message msg = new MimeMessage(session);
 
-		msg.setFrom(new InternetAddress("splunkalert@gmail.com"));
-		InternetAddress[] toAddresses = InternetAddress.parse(toAddress, true);
+		msg.setFrom(new InternetAddress(properties.getProperty("mailFrom").toString()));
+		InternetAddress[] toAddresses = InternetAddress.parse(properties.getProperty("mailTo").toString(), true);
 		msg.setRecipients(Message.RecipientType.TO, toAddresses);
 		
 		//msg.setRecipients(Message.RecipientType.TO, InternetAddress.parse(toAddress));
@@ -131,7 +138,7 @@ public class EmailSender {
 
 		try {
 
-			sendEmailWithAttachments(mailFrom, mailTo, subject, message, attachFiles);
+			sendEmailWithAttachments(subject, message, attachFiles);
 			System.out.println("Email sent.");
 
 		} catch (Exception ex) {

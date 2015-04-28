@@ -49,20 +49,10 @@
                 <!-- /.row -->
                 <!-- /.row -->
                 <div class="row">
-                    <div class="col-lg-6 col-md-12">
+                    <div class="col-lg-12 col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading ">
-                                Index 1 chart
-                                <div class="pull-right hide">
-                                    <select name="ddl-interval">
-                                        <option>3</option>
-                                        <option>5</option>
-                                        <option>10</option>
-                                        <option>30</option>
-                                        <option>60</option>
-                                    </select>
-                                    <span>sec interval</span>
-                                </div>
+                                <i class="fa fa-globe fa-fw"></i> Web server log monitor
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
@@ -74,21 +64,11 @@
                         </div>
                         <!-- /.panel -->
                     </div>
-                    
-                    <div class="col-lg-6 col-md-12">
+
+                    <div class="col-lg-12 col-md-12">
                         <div class="panel panel-default">
                             <div class="panel-heading ">
-                                Index 2 chart
-                                <div class="pull-right hide">
-                                    <select name="ddl-interval">
-                                        <option>3</option>
-                                        <option>5</option>
-                                        <option>10</option>
-                                        <option>30</option>
-                                        <option>60</option>
-                                    </select>
-                                    <span>sec interval</span>
-                                </div>
+                                <i class="fa fa-envelope fa-fw"></i> Email server log monitor
                             </div>
                             <!-- /.panel-heading -->
                             <div class="panel-body">
@@ -104,7 +84,6 @@
                 <!-- /.row -->
             </div>
             <!-- /#page-wrapper -->
-
         </div>
         <!-- /#wrapper -->
 
@@ -132,10 +111,10 @@
             $(function(){
                 $("#top-nav-bar").load('top-nav.html');
             });
+            //var baseURL = "http://192.168.0.105:8080/";
+            var baseURL = "http://166.45.20.32:8080/";
         </script>
         <script type="text/javascript">
-
-            var interval = [1, 5];
 
             $(function(){
 
@@ -143,36 +122,110 @@
 
                 // Determine how many data points to keep based on the placeholder's initial size;
                 // this gives us a nice high-res plot while avoiding more than one point per pixel.
-
                 var maximum = container.outerWidth() / 2 || 300;
 
-                //
-
                 var data = [];
+                console.log("Maximum => " + maximum);
 
                 function getRandomData(){
-
-                    if (data.length) {
-                        data = data.slice(1);
-                    }
-
-                    while (data.length < maximum) {
-                        var previous = data.length ? data[data.length - 1] : 50;
-                        var y = previous + Math.random() * 10 - 5;
-                        data.push(y < 0 ? 0 : y > 100 ? 100 : y);
-                    }
-
                     // zip the generated y values with the x values
-
                     var res = [];
-                    for (var i = 0; i < data.length; ++i) {
-                        res.push([i, data[i]])
+                    for (var i = 0; i < maximum; ++i) {
+                        res.push([i, 0]);
                     }
-
                     return res;
                 }
 
-                //
+                function getEmptyArray(length){
+                    var resp = [];
+                    for ($i = 0; $i < length; ++$i) {
+                        resp.push([$i, 0]);
+                    }
+                    return resp;
+                }
+
+                function prepareChart(selectot, series){
+                    return $.plot(selectot, series, {
+                        grid: {
+                            borderWidth: 1,
+                            minBorderMargin: 20,
+                            labelMargin: 10,
+                            backgroundColor: {
+                                colors: ["#fff", "#e4f4f4"]
+                            },
+                            margin: {
+                                top: 8,
+                                bottom: 20,
+                                left: 20
+                            },
+                            markings: function(axes){
+                                var markings = [];
+                                var xaxis = axes.xaxis;
+                                for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
+                                    markings.push({
+                                        xaxis: {
+                                            from: x,
+                                            to: x + xaxis.tickSize
+                                        },
+                                        color: "rgba(232, 232, 255, 0.2)"
+                                    });
+                                }
+                                return markings;
+                            }
+                        },
+                        xaxis: {
+                            tickFormatter: function(){
+                                return "";
+                            }
+                        },
+                        yaxis: {
+                            min: -1,
+                            max: 25
+                        },
+                        legend: {
+                            show: true
+                        }
+                    });
+                }
+
+
+                function rendorChart(plot, series, index){
+                    $.ajax({
+                        type: 'GET',
+                        url: "../EventServlet?index=" + index + "&limit=" + Math.round(maximum),
+                        dataType: 'json',
+                        beforeSend: function(xhr){
+                            console.log(index + " is requested ");
+                        },
+                        success: function(resp, textStatus){
+                            var coords = resp["0"].reverse();
+                            console.log(coords);
+                            console.log("response length => " + coords.length);
+                            if (coords.length < maximum) {
+                                var diff = maximum - coords.length;
+                                coords = $.merge(getEmptyArray(diff), coords);
+                            } else if (data.length > maximum) {
+                                var diff = data.length - maximum;
+                                //coords.splice(0, diff);
+                            }
+                            console.log(resp);
+                            console.log("After check => " + coords.length);
+
+                            series[0].data = coords;
+                            plot.setData(series);
+                            plot.draw();
+                        },
+                        error: function(){
+                            series[0].data = getRandomData();
+                            console.log(series[0].data.length);
+                            plot.setData(series);
+                            plot.draw();
+                        },
+                        complete: function(jqXHR, textStatus){
+                            console.log(index + " is completed ");
+                        }
+                    });
+                }
 
                 var series = [{
                         data: getRandomData(),
@@ -181,124 +234,22 @@
                         }
                     }];
 
-                //
-                
                 var plot = [];
 
-                plot[0] = $.plot($("#flot-line-chart-moving-1"), series, {
-                    grid: {
-                        borderWidth: 1,
-                        minBorderMargin: 20,
-                        labelMargin: 10,
-                        backgroundColor: {
-                            colors: ["#fff", "#e4f4f4"]
-                        },
-                        margin: {
-                            top: 8,
-                            bottom: 20,
-                            left: 20
-                        },
-                        markings: function(axes){
-                            var markings = [];
-                            var xaxis = axes.xaxis;
-                            for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
-                                markings.push({
-                                    xaxis: {
-                                        from: x,
-                                        to: x + xaxis.tickSize
-                                    },
-                                    color: "rgba(232, 232, 255, 0.2)"
-                                });
-                            }
-                            return markings;
-                        }
-                    },
-                    xaxis: {
-                        tickFormatter: function(){
-                            return "";
-                        }
-                    },
-                    yaxis: {
-                        min: 0,
-                        max: 110
-                    },
-                    legend: {
-                        show: true
-                    }
-                });
-
+                plot[0] = prepareChart($("#flot-line-chart-moving-1"), series);
+                rendorChart(plot[0], series, "access");
                 // Update the random dataset at 25FPS for a smoothly-animating chart
                 setInterval(function(){
-                    console.log("First one triggered");
-                    series[0].data = getRandomData();
-                    plot[0].setData(series);
-                    plot[0].draw();
-                }, interval[0] * 1000);
-                
-                
-                //Second chat                
-                var series = [{
-                        data: getRandomData(),
-                        lines: {
-                            fill: true
-                        }
-                    }];
-                
-                plot[1] = $.plot($("#flot-line-chart-moving-2"), series, {
-                    grid: {
-                        borderWidth: 1,
-                        minBorderMargin: 20,
-                        labelMargin: 10,
-                        backgroundColor: {
-                            colors: ["#fff", "#e4f4f4"]
-                        },
-                        margin: {
-                            top: 8,
-                            bottom: 20,
-                            left: 20
-                        },
-                        markings: function(axes){
-                            var markings = [];
-                            var xaxis = axes.xaxis;
-                            for (var x = Math.floor(xaxis.min); x < xaxis.max; x += xaxis.tickSize * 2) {
-                                markings.push({
-                                    xaxis: {
-                                        from: x,
-                                        to: x + xaxis.tickSize
-                                    },
-                                    color: "rgba(232, 232, 255, 0.2)"
-                                });
-                            }
-                            return markings;
-                        }
-                    },
-                    xaxis: {
-                        tickFormatter: function(){
-                            return "";
-                        }
-                    },
-                    yaxis: {
-                        min: 0,
-                        max: 110
-                    },
-                    legend: {
-                        show: true
-                    }
-                });
+                    rendorChart(plot[0], series, "access");
+                }, 20000);
 
+
+                plot[1] = prepareChart($("#flot-line-chart-moving-2"), series);
+                rendorChart(plot[1], series, "email");
                 // Update the random dataset at 25FPS for a smoothly-animating chart
                 setInterval(function(){
-                    console.log("Second one triggered");
-                    series[0].data = getRandomData();
-                    plot[1].setData(series);
-                    plot[1].draw();
-                }, interval[1] * 1000);
-            });
-
-            $("#log-type1 select[name='ddl-interval']").on('change', function(){
-                var key = $(this).closest("div.scr-log-key").attr('data-log-key');
-                console.log(interval[key] + " => " + $(this).val());
-                interval[key] = $(this).val();
+                    rendorChart(plot[1], series, "email");
+                }, 15000);
             });
 
         </script>

@@ -24,18 +24,28 @@ public class QueryServlet extends HttpServlet {
 			throws ServletException, java.io.IOException {
 
 		Service service = ExportSearch.init();
-		List<Event> events = ExportSearch.executeExportSearchByStatus(service);
 
 		Map<String, String> statusMap = new HashMap<String, String>();
 
-		for (Event event : events) {
-			statusMap.put(ErrorCodes.getCodeText(Integer.parseInt(event
-					.get("status"))), event.get("count"));
+		if ("access".equalsIgnoreCase(request.getParameter("index"))) {
+			String mySearch = "search index=access_idx latest=now earliest=-30d | stats count by status";
+			List<Event> events = ExportSearch.run(service, mySearch);
+
+			for (Event event : events) {
+				statusMap.put(ErrorCodes.getCodeText(Integer.parseInt(event
+						.get("status"))), event.get("count"));
+			}
+		} else {
+			String mySearch = "search index=syslog_idx latest=now earliest=-30d | stats count by status";
+			List<Event> events = ExportSearch.run(service, mySearch);
+
+			for (Event event : events) {
+				statusMap.put(event.get("status"), event.get("count"));
+			}
 		}
 
 		JSONObject json = new JSONObject(statusMap);
 		response.setContentType("text/plain");
 		response.getWriter().println(json);
 	}
-
 }

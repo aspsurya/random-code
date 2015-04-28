@@ -25,44 +25,49 @@ public class EventsCountServlet extends HttpServlet {
 			throws ServletException, java.io.IOException {
 
 		Service service = ExportSearch.init();
-		
-        //String mySearch = "search index=access_idx | stats count by date_year,date_month,date_mday,status";
-		String cond = "";
-		if("critical".equalsIgnoreCase(request.getParameter("type"))){
-			cond  = "status=4* ";
+
+		String mySearch = "";
+		if ("access".equalsIgnoreCase(request.getParameter("index"))) {
+			mySearch = "search index=access_idx ";
+			if ("critical".equalsIgnoreCase(request.getParameter("type"))) {
+				mySearch += "status=4* ";
+			}
+		} else { //Email index
+			mySearch = "search index=syslog_idx ";
+			if ("critical".equalsIgnoreCase(request.getParameter("type"))) {
+				mySearch += "status=bounced ";
+			}
 		}
-		
-        String mySearch = "search index=access_idx " + cond + "latest=now earliest=-3d| stats count by date_year,date_month,date_mday | sort -date_year,-date_month, -date_mday";
-		
+
+		mySearch += "latest=now earliest=-3d| stats count by date_year,date_month,date_mday | sort -date_year,-date_month, -date_mday";
+
 		List<Event> events = ExportSearch.run(service, mySearch);
-		
+
 		JSONObject json = null;
-		
+
 		Map<Integer, List<Integer>> eventsMap = new HashMap<Integer, List<Integer>>();
 		List<Integer> records = new ArrayList<Integer>();
-		
+
 		for (Event event : events) {
 			records.add(Integer.parseInt(event.get("count")));
 		}
-		
+
 		eventsMap.put(0, records);
 		ObjectMapper mapper = new ObjectMapper();
 		try {
 			String str = mapper.writeValueAsString(eventsMap);
 			json = new JSONObject(str);
-			//System.out.println(json);
+			// System.out.println(json);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		response.setContentType("text/plain");
 		response.getWriter().println(json);
 	}
-	
-	
-	public static void main(String[] args){
-		
-		
+
+	public static void main(String[] args) {
+
 	}
 
 }

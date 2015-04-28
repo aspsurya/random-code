@@ -382,3 +382,12 @@ table.dataTable thead .sorting:after {
 *[data-toggle="popover"]{
     cursor: default;
 }
+
+.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus{
+    color: #fcfcfc;
+    background: none;
+}
+
+tr td.legendLabel{
+    text-transform: capitalize;
+}
