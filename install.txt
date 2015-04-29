@@ -1,0 +1,27 @@
+
+In order to get work "Real-time Streaming Analytics & Alerting", please 
+follow below instructions:
+
+1.> Install of Splunk
+	a.> Check the configuration of You system, splunk is coming for 
+	    both Windows and Linux pakcages. 
+	
+	b.> According to your sys config, download free version of Splunk 
+	    from www.splunk.com web site
+		
+    c.> Please get the root access on the server where you want ot deploy 
+	    Splunk and create "splunk" user
+		
+	d.> Login as splunk user and install the splunk. The steps are already 
+	    provided in the splunk web site.
+	
+	e.> Once you install, just check whehter it has started or not using "ps"
+	    commnad. 
+
+2.> Download JDK, JBoss & Bootstrapper and install them.
+
+3.> Dowload the project from below GIT link and start using this tool
+    https://github.com/mrsrinivas/random-code 
+	
+
+
